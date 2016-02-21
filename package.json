@@ -1,0 +1,16 @@
+{
+  "name": "passport-relayr-example",
+  "version": "0.0.1",
+  "dependencies": {
+    "body-parser": "^1.13.2",
+    "connect-ensure-login": "^0.1.1",
+    "cookie-parser": "^1.3.5",
+    "express": "^4.13.1",
+    "express-handlebars": "^3.0.0",
+    "express-session": "^1.11.3",
+    "hbs": "^4.0.0",
+    "morgan": "^1.6.1",
+    "passport": "^0.2.2",
+    "passport-relayr": "file:../passport-relayr"
+  }
+}

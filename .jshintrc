@@ -1,0 +1,23 @@
+{
+  "bitwise": true,
+  "curly": true,
+  "immed": true,
+  "newcap": true,
+  "trailing": true,
+  "loopfunc": true,
+  "quotmark": "single",
+
+  "node": true,
+  "camelcase": true,
+  "forin": true,
+  "immed": true,
+  "latedef": true,
+  "newcap": true,
+  "noarg": true,
+  "noempty": true,
+  "nonew": true,
+  "quotmark": "single",
+  "undef": false,
+  "unused": true,
+  "laxcomma": true
+}

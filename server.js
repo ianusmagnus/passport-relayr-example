@@ -4,7 +4,16 @@ var Strategy = require('passport-relayr').Strategy;
 var hbs = require('hbs');
 var path = require('path');
 
+function requestLogger(httpModule, proto) {
+    var original = httpModule.request;
+    httpModule.request = function (options, callback) {
+        console.log(proto + "://" + options.host + options.path, options);
+        return original(options, callback);
+    }
+}
 
+requestLogger(require('http'), 'http');
+requestLogger(require('https'), 'https');
 
 // Configure the relayr strategy for use by Passport.
 //
@@ -18,13 +27,18 @@ passport.use(new Strategy({
         clientSecret: process.env.CLIENT_SECRET,
         callbackURL: 'http://localhost:3000/login/relayr/return'
     },
-    function(accessToken, refreshToken, profile, cb) {
+    function (accessToken, refreshToken, profile, done) {
         // In this example, the user's relayr profile is supplied as the user
         // record.  In a production-quality application, the relayr profile should
         // be associated with a user record in the application's database, which
         // allows for account linking and authentication with other identity
         // providers.
-        return cb(null, profile);
+
+        console.log('accessToken: ' + accessToken);
+        console.log('refreshToken: ' + refreshToken);
+        console.log('profile: ' + profile);
+
+        return done(null, profile);
     }));
 
 
@@ -37,11 +51,11 @@ passport.use(new Strategy({
 // from the database when deserializing.  However, due to the fact that this
 // example does not have a database, the complete Twitter profile is serialized
 // and deserialized.
-passport.serializeUser(function(user, cb) {
+passport.serializeUser(function (user, cb) {
     cb(null, user);
 });
 
-passport.deserializeUser(function(obj, cb) {
+passport.deserializeUser(function (obj, cb) {
     cb(null, obj);
 });
 
@@ -52,7 +66,6 @@ var app = express();
 app.set('port', process.env.PORT || 3000);
 
 
-
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
@@ -60,8 +73,8 @@ app.set('view engine', 'hbs');
 // logging, parsing, and session handling.
 app.use(require('morgan')('combined'));
 app.use(require('cookie-parser')());
-app.use(require('body-parser').urlencoded({ extended: true }));
-app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
+app.use(require('body-parser').urlencoded({extended: true}));
+app.use(require('express-session')({secret: 'keyboard cat', resave: true, saveUninitialized: true}));
 
 // Initialize Passport and restore authentication state, if any, from the
 // session.
@@ -71,13 +84,13 @@ app.use(passport.session());
 
 // Define routes.
 app.get('/',
-    function(req, res) {
+    function (req, res) {
 
-        res.render('home', { user: req.user });
+        res.render('home', {user: req.user});
     });
 
 app.get('/login',
-    function(req, res){
+    function (req, res) {
         res.render('login');
     });
 
@@ -85,15 +98,15 @@ app.get('/login/relayr',
     passport.authenticate('relayr'));
 
 app.get('/login/relayr/return',
-    passport.authenticate('relayr', { failureRedirect: '/login' }),
-    function(req, res) {
+    passport.authenticate('relayr', {failureRedirect: '/login'}),
+    function (req, res) {
         res.redirect('/');
     });
 
 app.get('/profile',
     require('connect-ensure-login').ensureLoggedIn(),
-    function(req, res){
-        res.render('profile', { user: req.user });
+    function (req, res) {
+        res.render('profile', {user: req.user});
     });
 
 app.listen(app.get('port'), function () {

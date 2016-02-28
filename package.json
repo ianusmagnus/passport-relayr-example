@@ -11,6 +11,6 @@
     "hbs": "^4.0.0",
     "morgan": "^1.6.1",
     "passport": "^0.2.2",
-    "passport-relayr": "file:../passport-relayr"
+    "passport-relayr": "^0.1.0"
   }
 }

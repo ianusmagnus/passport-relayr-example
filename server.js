@@ -4,17 +4,6 @@ var Strategy = require('passport-relayr').Strategy;
 var hbs = require('hbs');
 var path = require('path');
 
-function requestLogger(httpModule, proto) {
-    var original = httpModule.request;
-    httpModule.request = function (options, callback) {
-        console.log(proto + "://" + options.host + options.path, options);
-        return original(options, callback);
-    }
-}
-
-requestLogger(require('http'), 'http');
-requestLogger(require('https'), 'https');
-
 // Configure the relayr strategy for use by Passport.
 //
 // OAuth 2.0-based strategies require a `verify` function which receives the
@@ -33,13 +22,9 @@ passport.use(new Strategy({
         // be associated with a user record in the application's database, which
         // allows for account linking and authentication with other identity
         // providers.
-
-        console.log('accessToken: ' + accessToken);
-        console.log('refreshToken: ' + refreshToken);
-        console.log('profile: ' + profile);
-
-        return done(null, profile);
-    }));
+       return done(null, profile);
+    })
+);
 
 
 // Configure Passport authenticated session persistence.
